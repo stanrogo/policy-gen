@@ -1,0 +1,44 @@
+table|attribute|policy|permission
+call_center|cc_closed_date_sk||deny
+catalog_page|cp_catalog_page_number|13 < cp_catalog_page_number|deny
+catalog_returns|cr_fee|0 <= cr_reason_sk|deny
+catalog_sales|cs_net_profit|0 > cs_net_profit AND 'sales' = employee.e_role|deny
+customer|c_first_name|c_birth_year = employee.e_year|deny
+customer_demographics|cd_credit_rating|'UNITED KINGDOM' = customer.c_birth_country|deny
+household_demographics|hd_vehicle_count|110000 < income_band.ib_upper_bound AND hd_income_band_sk = income_band.ib_income_band_sk|deny
+income_band|ib_lower_bound|'manager' = employee.e_role|permit
+inventory|inv_quantity_on_hand|warehouse.w_warehouse_sk = inv_warehouse_sk AND 'United States' = warehouse.w_country|deny
+item|i_brand_id|1000000 < i_brand_id AND 2000000 > i_brand_id|deny
+reason|r_reason_desc|'support' = employee.e_role|deny
+store_returns|sr_fee|0 <= sr_reason_sk|deny
+store_sales|ss_quantity|13 < ss_quantity|deny
+web_page|wp_customer_sk||deny
+web_returns|wr_fee|0 <= wr_reason_sk|deny
+web_sales|ws_coupon_amt|1000 < ws_net_paid AND 80001 <= income_band.ib_lower_bound AND ws_ship_customer_sk = customer.c_customer_sk AND customer.c_current_hdemo_sk = household_demographics.hd_demo_sk AND household_demographics.hd_income_band_sk = income_band.ib_income_band_sk|permit
+call_center||'sales' = employee.e_role  OR (date_dim.d_date_sk = cc_open_date_sk AND 1997 > cc_open_date_sk)|permit
+catalog_page|||permit
+catalog_returns||(cr_refunded_customer_sk = customer.c_customer_sk AND customer.c_current_hdemo_sk = household_demographics.hd_demo_sk) AND ((household_demographics.hd_income_band_sk = income_band.ib_income_band_sk AND 0 = income_band.ib_lower_bound) OR ('0-500' = household_demographics.hd_buy_potential))|permit
+catalog_sales||(cs_ship_customer_sk = customer.c_customer_sk AND customer.c_current_hdemo_sk = household_demographics.hd_demo_sk) AND ((household_demographics.hd_income_band_sk = income_band.ib_income_band_sk AND 0 = income_band.ib_lower_bound) OR ('0-500' = household_demographics.hd_buy_potential))|permit
+customer||c_current_addr_sk = customer_address.ca_address_sk AND c_birth_country = customer_address.ca_country|permit
+customer_address||'sales' = employee.e_role AND 2010 >= employee.e_year|permit
+customer_demographics|||permit
+date_dim|||permit
+dbgen_version|||deny
+employee|||permit
+household_demographics|||permit
+income_band|||permit
+inventory||inv_warehouse_sk = warehouse.w_warehouse_sk AND 300000 >= warehouse.w_warehouse_sq_ft|permit
+item||store_returns.sr_item_sk = i_item_sk AND employee.e_store_sk = store_returns.sr_store_sk|permit
+promotion||store_sales.ss_promo_sk = p_promo_sk|permit
+reason|||permit
+ship_mode|||permit
+store||0 > s_closed_date_sk OR 'manager' = employee.e_role|permit
+store_returns||sr_store_sk = employee.e_store_sk|permit
+store_sales||ss_store_sk = employee.e_store_sk|permit
+time_dim|||permit
+warehouse|||permit
+web_page||0 < wp_customer_sk|permit
+web_returns||date_dim.d_year > employee.e_year AND wr_returned_date_sk = date_dim.d_date_sk|permit
+web_sales||date_dim.d_year > employee.e_year AND ws_sold_date_sk = date_dim.d_date_sk|permit
+web_site||'United States' = web_country |permit
+store_sales|ss_sold_date_sk|ss_sold_date_sk = date_dim.d_date_sk AND 'Monday' = date_dim.d_day_name|deny
